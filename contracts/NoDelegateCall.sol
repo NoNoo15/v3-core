@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity =0.7.6;
 
+// @note 设置pool为不用代理，用户直接和pool合约交互，而不通过代理合约
+
 /// @title Prevents delegatecall to a contract
 /// @notice Base contract that provides a modifier for preventing delegatecall to methods in a child contract
 abstract contract NoDelegateCall {

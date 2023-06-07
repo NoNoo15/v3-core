@@ -28,6 +28,9 @@ import './interfaces/callback/IUniswapV3SwapCallback.sol';
 import './interfaces/callback/IUniswapV3FlashCallback.sol';
 
 // @note NoNoo's fork
+// @note 改进是新增了价格区间，可以由用户自己设定
+// @todo 有什么优缺点，利益如何分配，对于预言机/闪电兑服务有什么更新
+// @todo AMM有什么变化
 
 contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
     using LowGasSafeMath for uint256;
@@ -80,6 +83,7 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
     /// @inheritdoc IUniswapV3PoolState
     uint256 public override feeGrowthGlobal1X128;
 
+    // @note uniswap本身收取的费用
     // accumulated protocol fees in token0/token1 units
     struct ProtocolFees {
         uint128 token0;

@@ -15,7 +15,7 @@ contract UniswapV3Factory is IUniswapV3Factory, UniswapV3PoolDeployer, NoDelegat
     address public override owner;
 
     /// @inheritdoc IUniswapV3Factory
-    mapping(uint24 => int24) public override feeAmountTickSpacing;
+    mapping(uint24 => int24) public override feeAmountTickSpacing;          // 手续费fee-->可用刻度(tick)的间隔
     /// @inheritdoc IUniswapV3Factory
     mapping(address => mapping(address => mapping(uint24 => address))) public override getPool;
 
@@ -39,10 +39,10 @@ contract UniswapV3Factory is IUniswapV3Factory, UniswapV3PoolDeployer, NoDelegat
     ) external override noDelegateCall returns (address pool) {
         require(tokenA != tokenB);
         (address token0, address token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
-        require(token0 != address(0));
+        require(token0 != address(0));                      // 0x0是最小的，token0不为0的话token1肯定也不为0
         int24 tickSpacing = feeAmountTickSpacing[fee];
         require(tickSpacing != 0);
-        require(getPool[token0][token1][fee] == address(0));
+        require(getPool[token0][token1][fee] == address(0));        // @note 不一样的fee可以创建不同的pool？
         pool = deploy(address(this), token0, token1, fee, tickSpacing);
         getPool[token0][token1][fee] = pool;
         // populate mapping in the reverse direction, deliberate choice to avoid the cost of comparing addresses
@@ -52,11 +52,13 @@ contract UniswapV3Factory is IUniswapV3Factory, UniswapV3PoolDeployer, NoDelegat
 
     /// @inheritdoc IUniswapV3Factory
     function setOwner(address _owner) external override {
-        require(msg.sender == owner);
-        emit OwnerChanged(owner, _owner);
+        require(msg.sender == owner);               // 只有上一任owner才能修改
+        emit OwnerChanged(owner, _owner);          // 可以方便监控
         owner = _owner;
     }
 
+    // 设置fee对应的tickSpacing，但是好像不能修改已有的(是的)
+    // @todo 具体数据范围为什么这么设置
     /// @inheritdoc IUniswapV3Factory
     function enableFeeAmount(uint24 fee, int24 tickSpacing) public override {
         require(msg.sender == owner);

@@ -32,7 +32,7 @@ contract UniswapV3PoolDeployer is IUniswapV3PoolDeployer {
         int24 tickSpacing
     ) internal returns (address pool) {
         parameters = Parameters({factory: factory, token0: token0, token1: token1, fee: fee, tickSpacing: tickSpacing});
-        pool = address(new UniswapV3Pool{salt: keccak256(abi.encode(token0, token1, fee))}());
-        delete parameters;
+        pool = address(new UniswapV3Pool{salt: keccak256(abi.encode(token0, token1, fee))}());      // @todo 这里是deploy操作，但是是怎么操作的呢
+        delete parameters;      // @todo 记得之前好像有说最好不要使用delete删除，之后调研一下
     }
 }
